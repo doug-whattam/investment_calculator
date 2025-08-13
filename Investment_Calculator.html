@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Investment Simulator</title>
+  <!-- TailwindCSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Make table horizontally scrollable on small screens */
+    .scrollwrap { overflow-x: auto; }
+    /* Prevent number inputs from showing spinners in some browsers */
+    input[type=number]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type=number] { -moz-appearance: textfield; }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-800">
+  <div class="max-w-6xl mx-auto p-6 space-y-6">
+    <header class="flex items-center justify-between">
+      <h1 class="text-2xl md:text-3xl font-bold">Investment Simulator</h1><p></p>
+      <h1 class="text-lg md: text-lg font-bold">Created by Doug Whattam</h1>
+      <a href="#" id="downloadCsvBtn" class="hidden md:inline-block px-4 py-2 rounded-2xl bg-slate-900 text-white shadow" download>Export CSV</a>
+    </header>
+
+    <!-- Inputs Card -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="md:col-span-2 bg-white rounded-2xl shadow p-5 space-y-4">
+        <h2 class="text-lg font-semibold">Inputs</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <label class="flex flex-col gap-1">
+            <span class="text-sm">Currency</span>
+            <select id="currency" class="px-3 py-2 rounded-xl border border-slate-200">
+              <option value="GBP">GBP (£)</option>
+              <option value="USD">USD ($)</option>
+              <option value="AUD">AUD ($)</option>
+            </select>
+          </label>
+          <label class="flex flex-col gap-1">
+            <span class="text-sm">Initial Investment</span>
+            <input id="initial" type="number" step="0.01" class="px-3 py-2 rounded-xl border border-slate-200" placeholder="e.g., 10000" value="10000" />
+          </label>
+          <label class="flex flex-col gap-1">
+            <span class="text-sm">Starting Share Price</span>
+            <input id="sharePrice" type="number" step="0.01" class="px-3 py-2 rounded-xl border border-slate-200" value="100" />
+          </label>
+          <label class="flex flex-col gap-1">
+            <span class="text-sm">Birth Year</span>
+            <input id="birthyear" type="number" min="1900" max="3000" class="px-3 py-2 rounded-xl border border-slate-200" placeholder="e.g., 2000" />
+          </label>
+          <label class="flex flex-col gap-1">
+            <span class="text-sm">Birth Month</span>
+            <input id="birthmonth" type="number" min="1" max="12" class="px-3 py-2 rounded-xl border border-slate-200" placeholder="e.g., 1 to 12" />
+          </label>
+          <label class="flex flex-col gap-1">
+            <span class="text-sm">Simulation Start Year</span>
+            <input id="simyear" type="number" min="1900" max="3000" class="px-3 py-2 rounded-xl border border-slate-200" value=2025 />
+          </label>
+          <label class="flex flex-col gap-1">
+            <span class="text-sm">Simulation Start Month</span>
+            <input id="simmonth" type="number" min="1" max="12" class="px-3 py-2 rounded-xl border border-slate-200" placeholder="e.g., 1 to 12" />
+          </label>
+          <label class="flex flex-col gap-1">
+            <span class="text-sm">Months to Simulate</span>
+            <input id="months" type="number" min="1" max="1200" class="px-3 py-2 rounded-xl border border-slate-200" placeholder="e.g., 360" value="360" />
+          </label>
+          <label class="flex flex-col gap-1">
+            <span class="text-sm">Annual Yield (%)</span>
+            <input id="yield" type="number" step="0.0001" class="px-3 py-2 rounded-xl border border-slate-200" placeholder="e.g., 4" value="4" />
+          </label>
+          <label class="flex flex-col gap-1">
+            <span class="text-sm">Annual Growth (%)</span>
+            <input id="growth" type="number" step="0.0001" class="px-3 py-2 rounded-xl border border-slate-200" placeholder="e.g., 3" value="3" />
+          </label>
+          <label class="flex flex-col gap-1">
+            <span class="text-sm">Drawdown Type</span>
+            <select id="drawType" class="px-3 py-2 rounded-xl border border-slate-200">
+              <option value="percent">Percentage of dividends</option>
+              <option value="amount">Fixed amount from dividends</option>
+            </select>
+          </label>
+          <label class="flex flex-col gap-1">
+            <span class="text-sm">Drawdown Value (<span id="drawUnit">%</span>)</span>
+            <input id="drawValue" type="number" step="0.01" class="px-3 py-2 rounded-xl border border-slate-200" placeholder="e.g., 50 for 50% or 200 for £200" value="0" />
+          </label>
+        </div>
+
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <h3 class="font-medium">Monthly Contributions</h3>
+            <div class="flex items-center gap-2">
+              <input id="csvFile" type="file" accept=".csv" class="hidden" />
+              <button id="uploadCsvBtn" class="px-3 py-2 text-sm rounded-xl border border-slate-300 bg-white hover:bg-slate-50">Upload CSV</button>
+              <button id="fillBtn" class="px-3 py-2 text-sm rounded-xl border border-slate-300 bg-white hover:bg-slate-50">Fill with constant</button>
+            </div>
+          </div>
+          <textarea id="contribs" rows="5" class="w-full px-3 py-2 rounded-xl border border-slate-200" placeholder="Comma or newline separated, one amount per month.
+Example (12 months): 500,500,500,500,500,500,500,500,500,500,500,500"></textarea>
+          <p class="text-xs text-slate-500">Tip: Leave blank for 0. If fewer entries than months, zeros are appended. If more, extra entries are ignored.</p>
+        </div>
+
+        <div class="flex items-center gap-3 pt-2">
+          <button id="calcBtn" class="px-4 py-2 rounded-2xl bg-blue-600 text-white shadow hover:bg-blue-700">Calculate</button>
+          <button id="resetBtn" class="px-4 py-2 rounded-2xl border border-slate-300 bg-white hover:bg-slate-50">Reset</button>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow p-5 space-y-3">
+        <h2 class="text-lg font-semibold">Summary</h2>
+        <div class="grid grid-cols-1 gap-2 text-sm">
+          <div class="flex items-center justify-between"><span>Total Contributions</span><strong id="sumContrib">–</strong></div>
+          <div class="flex items-center justify-between"><span>Total Dividends</span><strong id="sumDivs">–</strong></div>
+          <div class="flex items-center justify-between"><span>Dividends Withdrawn</span><strong id="sumWithdrawn">–</strong></div>
+          <div class="flex items-center justify-between"><span>Dividends Reinvested</span><strong id="sumReinvested">–</strong></div>
+          <div class="flex items-center justify-between"><span>Ending Portfolio Value</span><strong id="sumEnding">–</strong></div>
+        </div>
+        <p class="text-xs text-slate-500">Dividends are calculated monthly as <em>portfolio × (annual yield / 12)</em>. Growth is applied monthly as <em>portfolio × (annual growth / 12)</em>. Drawdown is taken from dividends only.</p>
+      </div>
+    </section>
+
+    <!-- Charts -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="bg-white rounded-2xl shadow p-5">
+        <h2 class="text-lg font-semibold mb-3">Portfolio Value Over Time</h2>
+        <canvas id="valueChart" height="140"></canvas>
+      </div>
+      <div class="bg-white rounded-2xl shadow p-5">
+        <h2 class="text-lg font-semibold mb-3">Dividends: Withdrawn vs Reinvested</h2>
+        <canvas id="dividendChart" height="140"></canvas>
+      </div>
+    </section>
+
+    <!-- Results Table -->
+    <section class="bg-white rounded-2xl shadow p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-lg font-semibold">Monthly Results</h2>
+        <div class="text-sm text-slate-500"><span id="rowCount">0</span> rows</div>
+      </div>
+      <div class="scrollwrap">
+        <table class="min-w-full text-sm">
+          <thead class="bg-slate-100 text-slate-700">
+            <tr>
+              <th class="text-left px-3 py-2">Month</th>
+              <th class="text-right px-3 py-2">Start Value</th>
+              <th class="text-right px-3 py-2">Contribution</th>
+              <th class="text-right px-3 py-2">Growth</th>
+              <th class="text-right px-3 py-2">Dividends</th>
+              <th class="text-right px-3 py-2">Withdrawn</th>
+              <th class="text-right px-3 py-2">Reinvested</th>
+              <th class="text-right px-3 py-2">End Value</th>
+              <th class="text-right px-3 py-2">Shares Held</th>
+            </tr>
+          </thead>
+          <tbody id="resultsTbody" class="divide-y"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer class="text-xs text-slate-500 pb-6">
+      <p>This is an educational simulator. It doesn't account for taxes, fees, trading costs, or irregular yield/growth patterns. Always do your own research.</p>
+    </footer>
+  </div>
+
+  <script>
+    // Utilities
+    const fmt = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'GBP', maximumFractionDigits: 2 });
+    const fmt2 = (n) => n.toLocaleString(undefined, { maximumFractionDigits: 2 });
+
+    const el = (id) => document.getElementById(id);
+
+    // State for charts to enable proper destroy/re-render
+    let valueChart = null;
+    let dividendChart = null;
+
+    function parseContribs(text) {
+      if (!text) return [];
+      const parts = text
+        .split(/\r?\n|,/g)
+        .map(s => s.trim())
+        .filter(Boolean)
+        .map(s => Number(s.replace(/[^0-9.-]/g, '')) || 0);
+      return parts;
+    }
+
+    function clampContribs(arr, months) {
+      const out = arr.slice(0, months);
+      while (out.length < months) out.push(0);
+      return out;
+    }
+
+    function calcMonthly({ initial, months, annualYield, annualGrowth, drawType, drawValue, contributions }) {
+      const mYield = (annualYield / 100) / 12;
+      const mGrowth = (annualGrowth / 100) / 12;
+      const results = [];
+
+      let value = Number(initial) || 0;
+      let totalContrib = 0, totalDivs = 0, totalWithdrawn = 0, totalReinvested = 0;
+
+      for (let m = 0; m < months; m++) {
+        const startValue = value;
+        const contrib = Number(contributions[m] || 0);
+        totalContrib += contrib;
+        value += contrib;
+
+        const growth = value * mGrowth; // growth on current capital after contribution
+        value += growth;
+
+        const dividends = value * mYield; // dividends on post-growth value
+        
+        const shares=value/sharePrice;
+
+        let withdraw = 0;
+        if (drawType === 'percent') {
+          withdraw = dividends * (drawValue / 100);
+        } else {
+          withdraw = Math.min(drawValue, dividends);
+        }
+
+        const reinvest = dividends - withdraw;
+        value += reinvest; // only reinvest remainder
+
+        totalDivs += dividends;
+        totalWithdrawn += withdraw;
+        totalReinvested += reinvest;
+
+        results.push({
+          month: m + 1,
+          startValue,
+          contribution: contrib,
+          growth,
+          dividends,
+          withdrawn: withdraw,
+          reinvested: reinvest,
+          endValue: value,
+          shares: value
+        });
+      }
+
+      return {
+        results,
+        totals: {
+          totalContrib,
+          totalDivs,
+          totalWithdrawn,
+          totalReinvested,
+          ending: results.length ? results[results.length - 1].endValue : value
+        }
+      };
+    }
+
+    function renderTable(rows) {
+      const tbody = el('resultsTbody');
+      tbody.innerHTML = '';
+      const frag = document.createDocumentFragment();
+
+      rows.forEach(r => {
+        const tr = document.createElement('tr');
+        const cells = [
+          r.month,
+          fmt.format(r.startValue),
+          fmt.format(r.contribution),
+          fmt.format(r.growth),
+          fmt.format(r.dividends),
+          fmt.format(r.withdrawn),
+          fmt.format(r.reinvested),
+          fmt.format(r.endValue),
+          fmt.format(r.shares)
+        ];
+        cells.forEach((c, i) => {
+          const td = document.createElement('td');
+          td.className = 'px-3 py-2 ' + (i === 0 ? 'text-left' : 'text-right');
+          td.textContent = c;
+          tr.appendChild(td);
+        });
+        frag.appendChild(tr);
+      });
+      tbody.appendChild(frag);
+      el('rowCount').textContent = rows.length.toString();
+    }
+
+    function renderSummary(totals) {
+      el('sumContrib').textContent = fmt.format(totals.totalContrib);
+      el('sumDivs').textContent = fmt.format(totals.totalDivs);
+      el('sumWithdrawn').textContent = fmt.format(totals.totalWithdrawn);
+      el('sumReinvested').textContent = fmt.format(totals.totalReinvested);
+      el('sumEnding').textContent = fmt.format(totals.ending);
+    }
+
+    function renderCharts(rows) {
+      const labels = rows.map(r => r.month);
+      const valueSeries = rows.map(r => r.endValue);
+      const withdrawnSeries = rows.map(r => r.withdrawn);
+      const reinvestedSeries = rows.map(r => r.reinvested);
+
+      const valueCtx = document.getElementById('valueChart').getContext('2d');
+      const divCtx = document.getElementById('dividendChart').getContext('2d');
+
+      if (valueChart) valueChart.destroy();
+      if (dividendChart) dividendChart.destroy();
+
+      valueChart = new Chart(valueCtx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            { label: 'Portfolio Value', data: valueSeries, borderWidth: 2, fill: false, tension: 0.12 }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: { y: { ticks: { callback: (v) => fmt.format(v) } } },
+          plugins: { legend: { display: true } }
+        }
+      });
+
+      dividendChart = new Chart(divCtx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [
+            { label: 'Withdrawn', data: withdrawnSeries, stack: 'divs' },
+            { label: 'Reinvested', data: reinvestedSeries, stack: 'divs' }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: { y: { stacked: true, ticks: { callback: (v) => fmt.format(v) } }, x: { stacked: true } },
+          plugins: { legend: { display: true } }
+        }
+      });
+    }
+
+    function toCSV(rows) {
+      const header = ['Month','Start Value','Contribution','Growth','Dividends','Withdrawn','Reinvested','End Value', 'Shares'];
+      const lines = rows.map(r => [
+        r.month,
+        r.startValue,
+        r.contribution,
+        r.growth,
+        r.dividends,
+        r.withdrawn,
+        r.reinvested,
+        r.endValue
+      ].map(x => typeof x === 'number' ? x.toFixed(2) : x).join(','));
+      return [header.join(','), ...lines].join('\n');
+    }
+
+    function downloadCSV(filename, text) {
+      const blob = new Blob([text], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = el('downloadCsvBtn');
+      a.href = url;
+      a.download = filename;
+      a.classList.remove('hidden');
+    }
+
+    // Event Handlers
+    el('drawType').addEventListener('change', () => {
+      const unit = el('drawType').value === 'percent' ? '%' : 'amount';
+      el('drawUnit').textContent = unit === '%' ? '%' : '£';
+    });
+
+    el('fillBtn').addEventListener('click', () => {
+      const months = Math.max(1, Number(el('months').value) || 1);
+      const amt = prompt('Enter a constant monthly contribution amount (number):', '500');
+      if (amt === null) return;
+      const val = Number(amt.replace(/[^0-9.-]/g, '')) || 0;
+      el('contribs').value = Array.from({ length: months }, () => val).join(',');
+    });
+
+    el('uploadCsvBtn').addEventListener('click', () => el('csvFile').click());
+    el('csvFile').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const text = reader.result;
+        // Parse CSV as either one-per-line or comma-separated (ignore headers and extra columns)
+        let items = text.split(/\r?\n/).flatMap(line => line.split(',')).map(s => s.trim());
+        // Drop header-like tokens
+        items = items.filter((s, i) => i === 0 || isFinite(Number(s.replace(/[^0-9.-]/g, ''))));
+        const nums = items.map(s => Number(s.replace(/[^0-9.-]/g, '')) || 0);
+        el('contribs').value = nums.join(',');
+      };
+      reader.readAsText(file);
+    });
+
+    el('resetBtn').addEventListener('click', () => {
+      el('initial').value = 10000;
+      el('months').value = 360;
+      el('yield').value = 4;
+      el('growth').value = 3;
+      el('drawType').value = 'percent';
+      el('drawValue').value = 0;
+      el('drawUnit').textContent = '%';
+      el('contribs').value = '';
+      el('resultsTbody').innerHTML = '';
+      el('rowCount').textContent = '0';
+      ['sumContrib','sumDivs','sumWithdrawn','sumReinvested','sumEnding'].forEach(id => el(id).textContent = '–');
+      if (valueChart) valueChart.destroy();
+      if (dividendChart) dividendChart.destroy();
+      el('downloadCsvBtn').classList.add('hidden');
+    });
+
+    el('calcBtn').addEventListener('click', () => {
+      const initial = Number(el('initial').value) || 0;
+      const months = Math.max(1, parseInt(el('months').value) || 1);
+      const annualYield = Number(el('yield').value) || 0;
+      const annualGrowth = Number(el('growth').value) || 0;
+      const drawType = el('drawType').value;
+      const drawValue = Math.max(0, Number(el('drawValue').value) || 0);
+
+      const contribsRaw = parseContribs(el('contribs').value);
+      const contributions = clampContribs(contribsRaw, months);
+
+      const { results, totals } = calcMonthly({ initial, months, annualYield, annualGrowth, drawType, drawValue, contributions });
+
+      renderTable(results);
+      renderSummary(totals);
+      renderCharts(results);
+
+      // Prepare CSV for export
+      const csv = toCSV(results);
+      downloadCSV('investment_simulator_results.csv', csv);
+    });
+
+    // Initialize unit label
+    el('drawUnit').textContent = '%';
+  </script>
+</body>
+</html>
