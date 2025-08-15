@@ -2,547 +2,94 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<div class="topnav">
-  <a class="active" href="#home">Home</a>
-  <a href="#news">Newsletter</a>
-  <a href="#contact">Calculators</a>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finance Hub</title>
+<style>
+body { font-family: Arial, sans-serif; margin: 0; background-color: #f4f4f4; }
+.navbar { background-color: #333; display: flex; justify-content: center; }
+.navbar a { color: white; padding: 14px 20px; text-decoration: none; }
+.navbar a:hover { background-color: #575757; }
+.hero { background: #4CAF50; color: white; text-align: center; padding: 50px 20px; }
+.hero h1 { margin-bottom: 10px; }
+.hero p { font-size: 18px; }
+.section { padding: 40px 20px; max-width: 1100px; margin: auto; }
+.section h2 { text-align: center; margin-bottom: 20px; }
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+.card { background: white; padding: 15px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+.card img { width: 100%; height: 150px; object-fit: cover; border-radius: 5px; }
+.card h3 { margin: 10px 0; }
+.card p { color: #555; }
+.card a { display: inline-block; margin-top: 10px; padding: 8px 12px; background: #4CAF50; color: white; text-decoration: none; border-radius: 4px; }
+.card a:hover { background: #45a049; }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="./index.html">Home</a>
+  <a href="./articles.html">Articles</a>
+  <a href="./calculators.html">Calculators</a>
   <a href="./about.html">About</a>
-</div>
-<title>Investment Simulator</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
- body { font-family: Arial, sans-serif; margin: 20px; }
- label { display: block; margin-top: 10px; }
- .flex-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
- table { border-collapse: collapse; margin-top: 20px; width: 100%; }
- th, td { border: 1px solid #ccc; padding: 5px; text-align: right; }
- .chart-container { width: 100%; height: 400px; margin-top: 20px; }
- .contrib-period { display: flex; gap: 5px; margin-bottom: 5px; flex-wrap: wrap; }
-</style>
-</head>
-<body>
-<h1>Investment Simulator</h1>
+</nav>
 
-<!-- Birthdate -->
-<div class="flex-row">
- <label>Birth Year:
-  <select id="birthYear">
-    <option value="">--</option>
-  </select>
- </label>
- <label>Birth Month:
-  <select id="birthMonth">
-    <option value="">--</option>
-  </select>
- </label>
+<div class="hero">
+  <h1>Hamster Financial Independence</h1>
+  <p>From the grind of the hamster wheel to the relaxation of the hammock. Everything you need to reach financial independence.</p>
 </div>
 
-<!-- Simulation start -->
-<div class="flex-row">
- <label>Simulation Start Year:
-  <select id="startYear"></select>
- </label>
- <label>Simulation Start Month:
-  <select id="startMonth"></select>
- </label>
+<div class="section">
+  <h2>Latest Articles</h2>
+  <div class="card-grid">
+    <div class="card">
+      <img src="article1.jpg" alt="Article 1">
+      <h3>Investment Strategies for 2025</h3>
+      <p>Learn the top strategies to maximize your portfolio this year.</p>
+      <a href="./article1.html">Read More</a>
+    </div>
+    <div class="card">
+      <img src="article2.jpg" alt="Article 2">
+      <h3>How to Save More Each Month</h3>
+      <p>Practical steps you can take to reduce expenses and grow savings.</p>
+      <a href="./articles.html">Read More</a>
+    </div>
+    <div class="card">
+      <img src="article3.jpg" alt="Article 3">
+      <h3>Understanding Dividend Stocks</h3>
+      <p>A beginner’s guide to investing in dividend-paying companies.</p>
+      <a href="./articles.html">Read More</a>
+    </div>
+  </div>
 </div>
 
-<!-- Currency and share price -->
-<div class="flex-row">
- <label>Currency:
-  <select id="currency">
-   <option value="GBP">GBP (£)</option>
-   <option value="USD">USD ($)</option>
-   <option value="AUD">AUD (A$)</option>
-  </select>
- </label>
- <label>Starting Share Price:
-  <input type="number" id="sharePrice" value="10" step="0.01">
- </label>
+<div class="section">
+  <h2>Popular Calculators</h2>
+  <div class="card-grid">
+    <div class="card">
+      <img src="calc1.jpg" alt="Investment Simulator">
+      <h3>Investment Simulator</h3>
+      <p>Model your portfolio growth and withdrawals over time.</p>
+      <a href="./investment-simulator.html">Launch</a>
+    </div>
+    <div class="card">
+      <img src="calc2.jpg" alt="Monthly Expenses Tracking">
+      <h3>Monthly Expenses Tracking</h3>
+      <p>Track your spending and identify cost-saving opportunities.</p>
+      <a href="./monthly-expenses-tracking.html">Launch</a>
+    </div>
+    <div class="card">
+      <img src="calc3.jpg" alt="Monthly Expenses Forecast">
+      <h3>Monthly Expenses Forecast</h3>
+      <p>Predict future spending trends based on your lifestyle.</p>
+      <a href="./monthly-expenses-forecast.html">Launch</a>
+    </div>
+    <div class="card">
+      <img src="calc4.jpg" alt="Home Loan Deposit Calculator">
+      <h3>Home Loan Deposit Calculator</h3>
+      <p>Find out how long it will take to reach your home deposit goal.</p>
+      <a href="./home-loan-deposit-calculator.html">Launch</a>
+    </div>
+  </div>
 </div>
 
-<!-- Yield, growth, drawdown -->
-<div class="flex-row">
- <label>Annual Yield %:
-  <input type="number" id="yieldPct" value="4" step="0.1">
- </label>
- <label>Annual Growth %:
-  <input type="number" id="growthPct" value="5" step="0.1">
- </label>
- <label>Drawdown % of Dividend:
-  <input type="number" id="drawdownPct" value="0" step="0.1">
- </label>
-</div>
-
-<!-- Contribution periods -->
-<h3>Contribution Periods</h3>
-<div id="contribPeriods"></div>
-<button onclick="addContributionPeriod()">Add Period</button>
-
-<!-- Years to run -->
-<label>Years to Simulate:
- <input type="number" id="years" value="30">
-</label>
-
-<br><br>
-<button onclick="runSimulation()">Run Simulation</button>
-
-<div class="chart-container"><canvas id="portfolioChart"></canvas></div>
-<div class="chart-container"><canvas id="withdrawalChart"></canvas></div>
-<div class="chart-container"><canvas id="sharesChart"></canvas></div>
-
-<table id="resultsTable">
- <thead>
-  <tr><th>Month</th><th>Age</th><th>Portfolio Value</th><th>Shares Held</th><th>Dividend</th><th>Withdrawn</th><th>Reinvested</th></tr>
- </thead>
- <tbody></tbody>
-</table>
-
-<script>
-// Populate year/month dropdowns
-const thisYear = new Date().getFullYear();
-const thisMonth = new Date().getMonth() + 1;
-
-function populateYears(sel, start, end, defaultVal) {
- for (let y = start; y <= end; y++) {
-   const opt = document.createElement('option');
-   opt.value = y; opt.textContent = y;
-   if (y === defaultVal) opt.selected = true;
-   sel.appendChild(opt);
- }
-}
-function populateMonths(sel, defaultVal) {
- for (let m = 1; m <= 12; m++) {
-   const opt = document.createElement('option');
-   opt.value = m; opt.textContent = m;
-   if (m === defaultVal) opt.selected = true;
-   sel.appendChild(opt);
- }
-}
-
-// Birth year/month (optional)
-populateYears(document.getElementById('birthYear'), 1900, thisYear, null);
-populateMonths(document.getElementById('birthMonth'), null);
-
-// Start year/month
-populateYears(document.getElementById('startYear'), 2000, thisYear + 50, thisYear);
-populateMonths(document.getElementById('startMonth'), thisMonth);
-
-function addContributionPeriod(startY = thisYear, startM = 1, endY = thisYear, endM = 12, amt = 500) {
- const div = document.createElement('div');
- div.className = 'contrib-period';
- div.innerHTML = `
-  <select class="startYear"></select>
-  <select class="startMonth"></select>
-  <select class="endYear"></select>
-  <select class="endMonth"></select>
-  <input type="number" class="amount" value="${amt}" step="0.01">
-  <button type="button" onclick="this.parentNode.remove()">X</button>
- `;
- populateYears(div.querySelector('.startYear'), 2000, thisYear + 50, startY);
- populateMonths(div.querySelector('.startMonth'), startM);
- populateYears(div.querySelector('.endYear'), 2000, thisYear + 50, endY);
- populateMonths(div.querySelector('.endMonth'), endM);
- document.getElementById('contribPeriods').appendChild(div);
-}
-addContributionPeriod();
-
-function getContributionForDate(year, month) {
- const periods = [...document.querySelectorAll('#contribPeriods .contrib-period')].map(div => ({
-   startYear: parseInt(div.querySelector('.startYear').value),
-   startMonth: parseInt(div.querySelector('.startMonth').value),
-   endYear: parseInt(div.querySelector('.endYear').value),
-   endMonth: parseInt(div.querySelector('.endMonth').value),
-   amount: parseFloat(div.querySelector('.amount').value)
- }));
- return periods.reduce((sum, p) => {
-   const afterStart = year > p.startYear || (year === p.startYear && month >= p.startMonth);
-   const beforeEnd = year < p.endYear || (year === p.endYear && month <= p.endMonth);
-   return sum + (afterStart && beforeEnd ? p.amount : 0);
- }, 0);
-}
-
-let portfolioChart, withdrawalChart, sharesChart;
-function runSimulation() {
- const birthYearVal = document.getElementById('birthYear').value;
- const birthMonthVal = document.getElementById('birthMonth').value;
- const hasBirthdate = birthYearVal && birthMonthVal;
- const birthYear = parseInt(birthYearVal);
- const birthMonth = parseInt(birthMonthVal);
- const startYear = parseInt(document.getElementById('startYear').value);
- const startMonth = parseInt(document.getElementById('startMonth').value);
- const years = parseInt(document.getElementById('years').value);
- const currency = document.getElementById('currency').value;
- const sharePriceStart = parseFloat(document.getElementById('sharePrice').value);
- const yieldPct = parseFloat(document.getElementById('yieldPct').value) / 100;
- const growthPct = parseFloat(document.getElementById('growthPct').value) / 100;
- const drawdownPct = parseFloat(document.getElementById('drawdownPct').value) / 100;
- 
- const months = years * 12;
- let portfolio = 0;
- let sharePrice = sharePriceStart;
- let shares = 0;
- 
- const labels = [], values = [], withdrawals = [], reinvestments = [], shareCounts = [];
- const tableBody = document.querySelector('#resultsTable tbody');
- tableBody.innerHTML = '';
- 
- for (let i = 0; i < months; i++) {
-   const year = startYear + Math.floor((startMonth - 1 + i) / 12);
-   const month = ((startMonth - 1 + i) % 12) + 1;
-   const age = hasBirthdate ? (year - birthYear) + (month - birthMonth) / 12 : null;
-   
-   const contrib = getContributionForDate(year, month);
-   if (contrib > 0) {
-     const sharesBought = contrib / sharePrice;
-     shares += sharesBought;
-     portfolio += contrib;
-   }
-   
-   const dividend = shares * sharePrice * (yieldPct / 12);
-   const withdrawn = dividend * drawdownPct;
-   const reinvest = dividend - withdrawn;
-   shares += reinvest / sharePrice;
-   portfolio = shares * sharePrice;
-   
-   // Monthly growth
-   sharePrice *= (1 + growthPct / 12);
-   portfolio = shares * sharePrice;
-   
-   labels.push(hasBirthdate ? age.toFixed(1) : `${year}-${month}`);
-   values.push(portfolio);
-   withdrawals.push(withdrawn);
-   reinvestments.push(reinvest);
-   shareCounts.push(shares);
-   
-   const row = `<tr><td>${year}-${month}</td><td>${hasBirthdate ? age.toFixed(1) : ''}</td><td>${fmt(portfolio, currency)}</td><td>${shares.toFixed(2)}</td><td>${fmt(dividend, currency)}</td><td>${fmt(withdrawn, currency)}</td><td>${fmt(reinvest, currency)}</td></tr>`;
-   tableBody.insertAdjacentHTML('beforeend', row);
- }
- 
- makeChart('portfolioChart', 'Portfolio Value', labels, values, currency, portfolioChart, hasBirthdate);
- makeChart('withdrawalChart', 'Withdrawn vs Reinvested', labels, withdrawals, currency, withdrawalChart, hasBirthdate);
- makeChart('sharesChart', 'Shares Held Over Time', labels, shareCounts, '', sharesChart, hasBirthdate);
-}
-
-function makeChart(id, label, labels, data, currency, chartRef, hasBirthdate) {
- if (chartRef) chartRef.destroy();
- const ctx = document.getElementById(id).getContext('2d');
- const fmtTick = currency ? val => fmt(val, currency) : val => val.toFixed(2);
- const newChart = new Chart(ctx, {
-   type: 'line',
-   data: { labels, datasets: [{ label, data, borderColor: 'blue', fill: false }] },
-   options: {
-     scales: {
-       x: { title: { display: true, text: hasBirthdate ? 'Age (years)' : 'Date' } },
-       y: { ticks: { callback: fmtTick } }
-     }
-   }
- });
- if (id === 'portfolioChart') portfolioChart = newChart;
- if (id === 'withdrawalChart') withdrawalChart = newChart;
- if (id === 'sharesChart') sharesChart = newChart;
-}
-
-function fmt(val, currency) {
- return currency ? new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(val) : val.toFixed(2);
-}
-</script>
 </body>
-</html>
-Key change
-If both Birth Year and Birth Month are selected, the chart X-axis shows age in years.
-
-Table also shows the calculated age.
-
-If no birthdate is given, it shows YYYY-MM instead.
-
-Do you want me to also make the withdrawal chart show both withdrawn and reinvested amounts on the same graph for easier comparison? That would make it visually clearer.
-
-
-
-
-
-
-
-You said:
-Yes please make that change and rewrite the entire code for me
-
-
-ChatGPT said:
-Alright — here’s the full updated HTML + JS file where the Withdrawals chart now shows two lines:
-one for Withdrawn and one for Reinvested, so you can see them together over time.
-
-It still has:
-
-Age on X-axis if a birthdate is provided
-
-Shares held tracking as a third chart
-
-Clean table output with both date and age
-
-html
-Copy
-Edit
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Investment Simulator</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
- body { font-family: Arial, sans-serif; margin: 20px; }
- label { display: block; margin-top: 10px; }
- .flex-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
- table { border-collapse: collapse; margin-top: 20px; width: 100%; }
- th, td { border: 1px solid #ccc; padding: 5px; text-align: right; }
- .chart-container { width: 100%; height: 400px; margin-top: 20px; }
- .contrib-period { display: flex; gap: 5px; margin-bottom: 5px; flex-wrap: wrap; }
-</style>
-</head>
-<body>
-<h1>Investment Simulator</h1>
-
-<!-- Birthdate -->
-<div class="flex-row">
- <label>Birth Year:
-  <select id="birthYear">
-    <option value="">--</option>
-  </select>
- </label>
- <label>Birth Month:
-  <select id="birthMonth">
-    <option value="">--</option>
-  </select>
- </label>
-</div>
-
-<!-- Simulation start -->
-<div class="flex-row">
- <label>Simulation Start Year:
-  <select id="startYear"></select>
- </label>
- <label>Simulation Start Month:
-  <select id="startMonth"></select>
- </label>
-</div>
-
-<!-- Currency and share price -->
-<div class="flex-row">
- <label>Currency:
-  <select id="currency">
-   <option value="GBP">GBP (£)</option>
-   <option value="USD">USD ($)</option>
-   <option value="AUD">AUD (A$)</option>
-  </select>
- </label>
- <label>Starting Share Price:
-  <input type="number" id="sharePrice" value="10" step="0.01">
- </label>
-</div>
-
-<!-- Yield, growth, drawdown -->
-<div class="flex-row">
- <label>Annual Yield %:
-  <input type="number" id="yieldPct" value="4" step="0.1">
- </label>
- <label>Annual Growth %:
-  <input type="number" id="growthPct" value="5" step="0.1">
- </label>
- <label>Drawdown % of Dividend:
-  <input type="number" id="drawdownPct" value="0" step="0.1">
- </label>
-</div>
-
-<!-- Contribution periods -->
-<h3>Contribution Periods</h3>
-<div id="contribPeriods"></div>
-<button onclick="addContributionPeriod()">Add Period</button>
-
-<!-- Years to run -->
-<label>Years to Simulate:
- <input type="number" id="years" value="30">
-</label>
-
-<br><br>
-<button onclick="runSimulation()">Run Simulation</button>
-
-<div class="chart-container"><canvas id="portfolioChart"></canvas></div>
-<div class="chart-container"><canvas id="withdrawalChart"></canvas></div>
-<div class="chart-container"><canvas id="sharesChart"></canvas></div>
-
-<table id="resultsTable">
- <thead>
-  <tr><th>Month</th><th>Age</th><th>Portfolio Value</th><th>Shares Held</th><th>Dividend</th><th>Withdrawn</th><th>Reinvested</th></tr>
- </thead>
- <tbody></tbody>
-</table>
-
-<script>
-// Populate year/month dropdowns
-const thisYear = new Date().getFullYear();
-const thisMonth = new Date().getMonth() + 1;
-
-function populateYears(sel, start, end, defaultVal) {
- for (let y = start; y <= end; y++) {
-   const opt = document.createElement('option');
-   opt.value = y; opt.textContent = y;
-   if (y === defaultVal) opt.selected = true;
-   sel.appendChild(opt);
- }
-}
-function populateMonths(sel, defaultVal) {
- for (let m = 1; m <= 12; m++) {
-   const opt = document.createElement('option');
-   opt.value = m; opt.textContent = m;
-   if (m === defaultVal) opt.selected = true;
-   sel.appendChild(opt);
- }
-}
-
-// Birth year/month (optional)
-populateYears(document.getElementById('birthYear'), 1900, thisYear, null);
-populateMonths(document.getElementById('birthMonth'), null);
-
-// Start year/month
-populateYears(document.getElementById('startYear'), 2000, thisYear + 50, thisYear);
-populateMonths(document.getElementById('startMonth'), thisMonth);
-
-function addContributionPeriod(startY = thisYear, startM = 1, endY = thisYear, endM = 12, amt = 500) {
- const div = document.createElement('div');
- div.className = 'contrib-period';
- div.innerHTML = `
-  <select class="startYear"></select>
-  <select class="startMonth"></select>
-  <select class="endYear"></select>
-  <select class="endMonth"></select>
-  <input type="number" class="amount" value="${amt}" step="0.01">
-  <button type="button" onclick="this.parentNode.remove()">X</button>
- `;
- populateYears(div.querySelector('.startYear'), 2000, thisYear + 50, startY);
- populateMonths(div.querySelector('.startMonth'), startM);
- populateYears(div.querySelector('.endYear'), 2000, thisYear + 50, endY);
- populateMonths(div.querySelector('.endMonth'), endM);
- document.getElementById('contribPeriods').appendChild(div);
-}
-addContributionPeriod();
-
-function getContributionForDate(year, month) {
- const periods = [...document.querySelectorAll('#contribPeriods .contrib-period')].map(div => ({
-   startYear: parseInt(div.querySelector('.startYear').value),
-   startMonth: parseInt(div.querySelector('.startMonth').value),
-   endYear: parseInt(div.querySelector('.endYear').value),
-   endMonth: parseInt(div.querySelector('.endMonth').value),
-   amount: parseFloat(div.querySelector('.amount').value)
- }));
- return periods.reduce((sum, p) => {
-   const afterStart = year > p.startYear || (year === p.startYear && month >= p.startMonth);
-   const beforeEnd = year < p.endYear || (year === p.endYear && month <= p.endMonth);
-   return sum + (afterStart && beforeEnd ? p.amount : 0);
- }, 0);
-}
-
-let portfolioChart, withdrawalChart, sharesChart;
-function runSimulation() {
- const birthYearVal = document.getElementById('birthYear').value;
- const birthMonthVal = document.getElementById('birthMonth').value;
- const hasBirthdate = birthYearVal && birthMonthVal;
- const birthYear = parseInt(birthYearVal);
- const birthMonth = parseInt(birthMonthVal);
- const startYear = parseInt(document.getElementById('startYear').value);
- const startMonth = parseInt(document.getElementById('startMonth').value);
- const years = parseInt(document.getElementById('years').value);
- const currency = document.getElementById('currency').value;
- const sharePriceStart = parseFloat(document.getElementById('sharePrice').value);
- const yieldPct = parseFloat(document.getElementById('yieldPct').value) / 100;
- const growthPct = parseFloat(document.getElementById('growthPct').value) / 100;
- const drawdownPct = parseFloat(document.getElementById('drawdownPct').value) / 100;
- 
- const months = years * 12;
- let portfolio = 0;
- let sharePrice = sharePriceStart;
- let shares = 0;
- 
- const labels = [], values = [], withdrawals = [], reinvestments = [], shareCounts = [];
- const tableBody = document.querySelector('#resultsTable tbody');
- tableBody.innerHTML = '';
- 
- for (let i = 0; i < months; i++) {
-   const year = startYear + Math.floor((startMonth - 1 + i) / 12);
-   const month = ((startMonth - 1 + i) % 12) + 1;
-   const age = hasBirthdate ? (year - birthYear) + (month - birthMonth) / 12 : null;
-   
-   const contrib = getContributionForDate(year, month);
-   if (contrib > 0) {
-     const sharesBought = contrib / sharePrice;
-     shares += sharesBought;
-     portfolio += contrib;
-   }
-   
-   const dividend = shares * sharePrice * (yieldPct / 12);
-   const withdrawn = dividend * drawdownPct;
-   const reinvest = dividend - withdrawn;
-   shares += reinvest / sharePrice;
-   portfolio = shares * sharePrice;
-   
-   // Monthly growth
-   sharePrice *= (1 + growthPct / 12);
-   portfolio = shares * sharePrice;
-   
-   labels.push(hasBirthdate ? age.toFixed(1) : `${year}-${month}`);
-   values.push(portfolio);
-   withdrawals.push(withdrawn);
-   reinvestments.push(reinvest);
-   shareCounts.push(shares);
-   
-   const row = `<tr><td>${year}-${month}</td><td>${hasBirthdate ? age.toFixed(1) : ''}</td><td>${fmt(portfolio, currency)}</td><td>${shares.toFixed(2)}</td><td>${fmt(dividend, currency)}</td><td>${fmt(withdrawn, currency)}</td><td>${fmt(reinvest, currency)}</td></tr>`;
-   tableBody.insertAdjacentHTML('beforeend', row);
- }
- 
- makePortfolioChart(labels, values, currency, hasBirthdate);
- makeWithdrawalChart(labels, withdrawals, reinvestments, currency, hasBirthdate);
- makeSharesChart(labels, shareCounts, hasBirthdate);
-}
-
-function makePortfolioChart(labels, data, currency, hasBirthdate) {
- if (portfolioChart) portfolioChart.destroy();
- const ctx = document.getElementById('portfolioChart').getContext('2d');
- portfolioChart = new Chart(ctx, {
-   type: 'line',
-   data: { labels, datasets: [{ label: 'Portfolio Value', data, borderColor: 'blue', fill: false }] },
-   options: { scales: { x: { title: { display: true, text: hasBirthdate ? 'Age (years)' : 'Date' } }, y: { ticks: { callback: val => fmt(val, currency) } } } }
- });
-}
-
-function makeWithdrawalChart(labels, withdrawals, reinvestments, currency, hasBirthdate) {
- if (withdrawalChart) withdrawalChart.destroy();
- const ctx = document.getElementById('withdrawalChart').getContext('2d');
- withdrawalChart = new Chart(ctx, {
-   type: 'line',
-   data: { 
-     labels, 
-     datasets: [
-       { label: 'Withdrawn', data: withdrawals, borderColor: 'red', fill: false },
-       { label: 'Reinvested', data: reinvestments, borderColor: 'green', fill: false }
-     ] 
-   },
-   options: { scales: { x: { title: { display: true, text: hasBirthdate ? 'Age (years)' : 'Date' } }, y: { ticks: { callback: val => fmt(val, currency) } } } }
- });
-}
-
-function makeSharesChart(labels, data, hasBirthdate) {
- if (sharesChart) sharesChart.destroy();
- const ctx = document.getElementById('sharesChart').getContext('2d');
- sharesChart = new Chart(ctx, {
-   type: 'line',
-   data: { labels, datasets: [{ label: 'Shares Held', data, borderColor: 'purple', fill: false }] },
-   options: { scales: { x: { title: { display: true, text: hasBirthdate ? 'Age (years)' : 'Date' } }, y: { ticks: { callback: val => val.toFixed(2) } } } }
- });
-}
-
-function fmt(val, currency) {
- return currency ? new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(val) : val.toFixed(2);
-}
-</script>
-</body>
-
 </html>
