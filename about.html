@@ -2,13 +2,46 @@
 <html lang="en">
 <head>
      <meta charset="UTF-8">
+<!-- Navigation Menu -->
+<nav class="navbar">
+  <a href="./index.html" class="nav-button">Home</a>
+  <a href="./articles.html" class="nav-button">Articles</a>
+  <a href="./calculators.html" class="nav-button">Calculators</a>
+  <a href="./about.html" class="nav-button">About</a>
+</nav>
+
+<style>
+/* Navigation bar container */
+.navbar {
+  background-color: #333;
+  overflow: hidden;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  border-bottom: 2px solid #222;
+}
+
+/* Links inside the navbar */
+.navbar .nav-button {
+  color: white;
+  text-align: center;
+  padding: 14px 20px;
+  text-decoration: none;
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+/* Hover effect */
+.navbar .nav-button:hover {
+  background-color: #575757;
+  cursor: pointer;
+}
+
+/* Optional: make active link stand out */
+.navbar .nav-button.active {
+  background-color: #04AA6D;
+}
+</style>
      <title>About</title>
 </head>
-<body>
-    <div class="container">
-        <h1>About</h1>
-        <p>This is a test</p>
-        <a href="./index.html"><h2>Click here to return to main page!</h2></a>
-    </div>
-</body>
-</html>
