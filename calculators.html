@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculators</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+}
+
+/* Navigation Bar */
+.navbar {
+  background-color: #333;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+.navbar a {
+  color: white;
+  text-align: center;
+  padding: 14px 20px;
+  text-decoration: none;
+}
+
+.navbar a:hover {
+  background-color: #575757;
+}
+
+/* Grid container for calculators */
+.calculators-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Calculator card styling */
+.calculator-card {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+
+.calculator-card:hover {
+  transform: translateY(-5px);
+}
+
+.calculator-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.calculator-content {
+  padding: 15px;
+}
+
+.calculator-title {
+  font-size: 18px;
+  margin: 0 0 10px;
+}
+
+.calculator-description {
+  font-size: 14px;
+  color: #555;
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="navbar">
+  <a href="./index.html">Home</a>
+  <a href="./articles.html">Articles</a>
+  <a href="./calculators.html">Calculators</a>
+  <a href="./about.html">About</a>
+</nav>
+
+<!-- Calculators Section -->
+<div class="calculators-container">
+  <div class="calculator-card">
+    <a href="./investment-simulator.html"><img src="https://github.com/doug-whattam/investment_calculator/blob/main/investment-simulator.png?raw=true" alt="Investment Simulator"></a>
+    <div class="calculator-content">
+      <h3 class="calculator-title"><a href="investment-simulator.html">Investment Simulator</a></h3>
+      <p class="calculator-description">Model your investments over time with variable contributions, yield, and growth rates.</p>
+    </div>
+  </div>
+
+  <div class="calculator-card">
+    <a href="./monthly-expenses-tracking.html"><img src="https://via.placeholder.com/400x200" alt="Monthly Expenses Tracking"></a>
+    <div class="calculator-content">
+      <h3 class="calculator-title"><a href="monthly-expenses-tracking.html">Monthly Expenses Tracking</a></h3>
+      <p class="calculator-description">Track your monthly spending and visualize trends to improve financial habits.</p>
+    </div>
+  </div>
+
+  <div class="calculator-card">
+    <a href="./monthly-expenses-forecast.html"><img src="https://via.placeholder.com/400x200" alt="Monthly Expenses Forecast"></a>
+    <div class="calculator-content">
+      <h3 class="calculator-title"><a href="monthly-expenses-forecast.html">Monthly Expenses Forecast</a></h3>
+      <p class="calculator-description">Project your future expenses based on past data and lifestyle changes.</p>
+    </div>
+  </div>
+
+  <div class="calculator-card">
+    <a href="./home-loan-deposit-calculator.html"><img src="https://via.placeholder.com/400x200" alt="Home Loan Deposit Calculator"></a>
+    <div class="calculator-content">
+      <h3 class="calculator-title"><a href="home-loan-deposit-calculator.html">Home Loan Deposit Calculator</a></h3>
+      <p class="calculator-description">Find out how much you need to save for your dream home deposit and how long it will take.</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

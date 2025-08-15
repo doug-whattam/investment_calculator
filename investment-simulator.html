@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<!-- Navigation Menu -->
+<nav class="navbar">
+  <a href="./index.html" class="nav-button">Home</a>
+  <a href="./articles.html" class="nav-button">Articles</a>
+  <a href="./calculators.html" class="nav-button">Calculators</a>
+  <a href="./about.html" class="nav-button">About</a>
+</nav>
+
+<style>
+/* Navigation bar container */
+.navbar {
+  background-color: #333;
+  overflow: hidden;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  border-bottom: 2px solid #222;
+}
+
+/* Links inside the navbar */
+.navbar .nav-button {
+  color: white;
+  text-align: center;
+  padding: 14px 20px;
+  text-decoration: none;
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+/* Hover effect */
+.navbar .nav-button:hover {
+  background-color: #575757;
+  cursor: pointer;
+}
+
+/* Optional: make active link stand out */
+.navbar .nav-button.active {
+  background-color: #04AA6D;
+}
+</style>
+
+<title>Investment Simulator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; }
+  h1 { margin-bottom: 8px; }
+  .flex-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  label { display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
+  input, select, button { font-size: 14px; padding: 6px 8px; }
+  .section { margin-top: 18px; }
+  .chart-container { width: 100%; height: 380px; margin-top: 16px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+  th, td { border: 1px solid #ccc; padding: 6px; text-align: right; }
+  th:first-child, td:first-child { text-align: left; }
+  .contrib-period { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
+  .totals { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; margin-top: 8px; }
+  .card { border: 1px solid #e2e2e2; border-radius: 6px; padding: 10px; }
+  .controls { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+  .spacer { height: 8px; }
+</style>
+</head>
+<body>
+  <h1>Investment Simulator</h1>
+
+  <!-- SUMMARY -->
+  <div class="section card">
+    <strong>Summary</strong>
+    <div class="totals">
+      <div>Total Contributions: <span id="sumContrib">–</span></div>
+      <div>Total Dividends: <span id="sumDivs">–</span></div>
+      <div>Dividends Withdrawn: <span id="sumWithdrawn">–</span></div>
+      <div>Dividends Reinvested: <span id="sumReinvested">–</span></div>
+      <div>Ending Portfolio Value: <span id="sumEnding">–</span></div>
+    </div>
+  </div>
+
+  <!-- DATES -->
+  <div class="section">
+    <div class="flex-row">
+      <label>Birth Year
+        <select id="birthYear">
+          <option value="">--</option>
+        </select>
+      </label>
+      <label>Birth Month
+        <select id="birthMonth">
+          <option value="">--</option>
+        </select>
+      </label>
+      <label>Simulation Start Year
+        <select id="startYear"></select>
+      </label>
+      <label>Simulation Start Month
+        <select id="startMonth"></select>
+      </label>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="section card">
+    <strong>Settings</strong>
+    <div class="spacer"></div>
+    <div class="flex-row">
+      <label>Currency
+        <select id="currency">
+          <option value="GBP">GBP (£)</option>
+          <option value="USD">USD ($)</option>
+          <option value="AUD">AUD (A$)</option>
+        </select>
+      </label>
+      <label>Starting Share Price
+        <input type="number" id="sharePrice" value="100" min="0" step="0.01">
+      </label>
+      <label>Initial Investment (lump sum at start)
+        <input type="number" id="initialInvestment" value="10000" min="0" step="0.01">
+      </label>
+      <label>Years to Simulate
+        <input type="number" id="years" value="30" min="1" step="1">
+      </label>
+    </div>
+
+    <div class="flex-row">
+      <label>Annual Yield %
+        <input type="number" id="yieldPct" value="4" step="0.01" min="0">
+      </label>
+      <label>Dividend Frequency
+        <select id="divFreq">
+          <option value="quarterly">Quarterly (4x)</option>
+          <option value="biannually">Bi-annually (2x)</option>
+          <option value="annually">Annually (1x)</option>
+        </select>
+      </label>
+      <label>Annual Growth %
+        <input type="number" id="growthPct" value="5" step="0.01" min="0">
+      </label>
+    </div>
+
+    <div class="flex-row">
+      <label>Drawdown Type
+        <select id="drawType">
+          <option value="percent">Percentage of dividends</option>
+          <option value="amount">Fixed amount of dividends</option>
+        </select>
+      </label>
+      <label>Drawdown Value (<span id="drawUnit">%</span>)
+        <input type="number" id="drawValue" value="0" step="0.01" min="0">
+      </label>
+      <label>Drawdown Start Year
+        <select id="ddStartYear"></select>
+      </label>
+      <label>Drawdown Start Month
+        <select id="ddStartMonth"></select>
+      </label>
+    </div>
+
+    <div class="controls">
+      <button id="runBtn">Run Simulation</button>
+      <button id="resetBtn">Reset Simulation</button>
+      <button id="exportBtn">Export Results as CSV</button>
+    </div>
+  </div>
+
+  <!-- CONTRIBUTION PERIODS -->
+  <div class="section">
+    <h3>Contribution Periods</h3>
+    <div id="contribPeriods"></div>
+    <button id="addPeriodBtn">Add Period</button>
+  </div>
+
+  <!-- CHARTS -->
+  <div class="chart-container"><canvas id="portfolioChart"></canvas></div>
+  <div class="chart-container"><canvas id="withdrawalChart"></canvas></div>
+  <div class="chart-container"><canvas id="sharesChart"></canvas></div>
+
+  <!-- TABLE -->
+  <table id="resultsTable">
+    <thead>
+      <tr>
+        <th>Month</th>
+        <th>Age</th>
+        <th>Portfolio Value</th>
+        <th>Shares Held</th>
+        <th>Dividend</th>
+        <th>Withdrawn</th>
+        <th>Reinvested</th>
+        <th>Contrib (This Month)</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+<script>
+/* ---------- Helpers ---------- */
+const now = new Date();
+const THIS_YEAR = now.getFullYear();
+const THIS_MONTH = now.getMonth() + 1;
+
+function populateYears(sel, start, end, defaultVal) {
+  sel.innerHTML = '';
+  for (let y = start; y <= end; y++) {
+    const opt = document.createElement('option');
+    opt.value = y; opt.textContent = y;
+    if (defaultVal != null && y === defaultVal) opt.selected = true;
+    sel.appendChild(opt);
+  }
+}
+function populateMonths(sel, defaultVal) {
+  sel.innerHTML = '';
+  for (let m = 1; m <= 12; m++) {
+    const opt = document.createElement('option');
+    opt.value = m; opt.textContent = m;
+    if (defaultVal != null && m === defaultVal) opt.selected = true;
+    sel.appendChild(opt);
+  }
+}
+
+/* ---------- DOM ---------- */
+const el = id => document.getElementById(id);
+const birthYearSel = el('birthYear');
+const birthMonthSel = el('birthMonth');
+const startYearSel = el('startYear');
+const startMonthSel = el('startMonth');
+const ddStartYearSel = el('ddStartYear');
+const ddStartMonthSel = el('ddStartMonth');
+
+populateYears(birthYearSel, 1900, THIS_YEAR, null);
+populateMonths(birthMonthSel, null);
+populateYears(startYearSel, 2000, THIS_YEAR + 50, THIS_YEAR);
+populateMonths(startMonthSel, THIS_MONTH);
+populateYears(ddStartYearSel, 2000, THIS_YEAR + 50, THIS_YEAR);
+populateMonths(ddStartMonthSel, THIS_MONTH);
+
+const contribContainer = el('contribPeriods');
+el('addPeriodBtn').addEventListener('click', () => addContributionPeriod());
+
+function addContributionPeriod(startY = THIS_YEAR, startM = 1, endY = THIS_YEAR, endM = 12, amt = 500) {
+  const div = document.createElement('div');
+  div.className = 'contrib-period';
+  div.innerHTML = `
+    <label>Start Year
+      <select class="startYear"></select>
+    </label>
+    <label>Start Month
+      <select class="startMonth"></select>
+    </label>
+    <label>End Year
+      <select class="endYear"></select>
+    </label>
+    <label>End Month
+      <select class="endMonth"></select>
+    </label>
+    <label>Monthly Amount
+      <input type="number" class="amount" value="${amt}" min="0" step="0.01">
+    </label>
+    <button type="button" class="removeBtn">Remove</button>
+  `;
+  populateYears(div.querySelector('.startYear'), 2000, THIS_YEAR + 50, startY);
+  populateMonths(div.querySelector('.startMonth'), startM);
+  populateYears(div.querySelector('.endYear'), 2000, THIS_YEAR + 50, endY);
+  populateMonths(div.querySelector('.endMonth'), endM);
+  div.querySelector('.removeBtn').addEventListener('click', () => div.remove());
+  contribContainer.appendChild(div);
+}
+// Add a default period
+addContributionPeriod();
+
+/* ---------- Formatting ---------- */
+function fmtCurrency(val, currency) {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 2 }).format(val);
+}
+function fmtNum(val, dp=2) {
+  return Number(val).toFixed(dp);
+}
+
+/* ---------- Core Logic ---------- */
+function monthIndex(y, m) { return y * 12 + (m - 1); } // comparable integer
+function isInRange(y, m, sy, sm, ey, em) {
+  const idx = monthIndex(y, m);
+  return idx >= monthIndex(sy, sm) && idx <= monthIndex(ey, em);
+}
+function getContributionForDate(year, month) {
+  const rows = [...contribContainer.querySelectorAll('.contrib-period')].map(div => ({
+    sy: parseInt(div.querySelector('.startYear').value),
+    sm: parseInt(div.querySelector('.startMonth').value),
+    ey: parseInt(div.querySelector('.endYear').value),
+    em: parseInt(div.querySelector('.endMonth').value),
+    amt: parseFloat(div.querySelector('.amount').value) || 0
+  }));
+  return rows.reduce((sum, r) => sum + (isInRange(year, month, r.sy, r.sm, r.ey, r.em) ? r.amt : 0), 0);
+}
+
+function payoutMonthsFor(freq) {
+  if (freq === 'quarterly')   return [3, 6, 9, 12];  // Mar, Jun, Sep, Dec
+  if (freq === 'biannually')  return [6, 12];        // Jun, Dec
+  return [12];                                       // annually: Dec
+}
+
+/* ---------- Simulation ---------- */
+let portfolioChart, withdrawalChart, sharesChart;
+
+function runSimulation() {
+  const currency = el('currency').value;
+  const sharePriceStart = parseFloat(el('sharePrice').value) || 0;
+  const initialInvestment = Math.max(0, parseFloat(el('initialInvestment').value) || 0);
+  const years = Math.max(1, parseInt(el('years').value) || 1);
+
+  const yieldPct = Math.max(0, parseFloat(el('yieldPct').value) || 0) / 100;
+  const growthPct = Math.max(0, parseFloat(el('growthPct').value) || 0) / 100;
+  const freq = el('divFreq').value;
+  const payoutMonths = payoutMonthsFor(freq);
+  const payoutsPerYear = payoutMonths.length;
+
+  const drawType = el('drawType').value; // 'percent' | 'amount'
+  const drawValue = Math.max(0, parseFloat(el('drawValue').value) || 0);
+  const ddStartYear = parseInt(ddStartYearSel.value);
+  const ddStartMonth = parseInt(ddStartMonthSel.value);
+
+  const startYear = parseInt(startYearSel.value);
+  const startMonth = parseInt(startMonthSel.value);
+
+  const hasBirthdate = birthYearSel.value && birthMonthSel.value;
+  const birthYear = parseInt(birthYearSel.value || '0');
+  const birthMonth = parseInt(birthMonthSel.value || '1');
+
+  const months = years * 12;
+
+  let sharePrice = sharePriceStart;
+  let shares = 0;        // integer shares only
+  let portfolio = 0;
+
+  // Initial lump-sum: buy whole shares at starting price
+  if (sharePrice > 0 && initialInvestment > 0) {
+    const initShares = Math.floor(initialInvestment / sharePrice);
+    shares += initShares;
+    portfolio = shares * sharePrice; // no cash tracked (remainder ignored)
+  }
+
+  // Results collections
+  const labels = [];
+  const valueSeries = [];
+  const withdrawnSeries = [];
+  const reinvestedSeries = [];
+  const sharesSeries = [];
+  const rows = [];
+
+  // Totals
+  let totalContrib = initialInvestment; // count initial in contributions
+  let totalDivs = 0;
+  let totalWithdrawn = 0;
+  let totalReinvested = 0;
+
+  // Loop months
+  for (let i = 0; i < months; i++) {
+    const year = startYear + Math.floor((startMonth - 1 + i) / 12);
+    const month = ((startMonth - 1 + i) % 12) + 1;
+    const age = hasBirthdate ? (year - birthYear) + (month - birthMonth) / 12 : null;
+
+    // 1) Contribution: buy whole shares only
+    const contrib = getContributionForDate(year, month);
+    if (contrib > 0 && sharePrice > 0) {
+      const bought = Math.floor(contrib / sharePrice);
+      if (bought > 0) {
+        shares += bought;
+        totalContrib += contrib; // treat the full intended contrib as spent (common assumption)
+      } else {
+        // If contrib less than price, we still count contribution? Typically no;
+        // We'll count only if at least 1 share is purchasable to avoid overcounting.
+        // Comment out next line if you prefer to always count full contribution toward "total contributed".
+        // totalContrib += contrib;
+      }
+    }
+
+    // 2) Dividend payout on specific months only
+    let dividend = 0;
+    let withdrawn = 0;
+    let reinvest = 0;
+    const drawdownActive = monthIndex(year, month) >= monthIndex(ddStartYear, ddStartMonth);
+
+    if (payoutMonths.includes(month) && yieldPct > 0 && payoutsPerYear > 0) {
+      dividend = shares * sharePrice * (yieldPct / payoutsPerYear);
+      if (drawdownActive) {
+        if (drawType === 'percent') {
+          withdrawn = dividend * (drawValue / 100);
+        } else { // fixed amount
+          withdrawn = Math.min(drawValue, dividend);
+        }
+      } else {
+        withdrawn = 0;
+      }
+      reinvest = dividend - withdrawn;
+
+      // Reinvest into whole shares only
+      if (sharePrice > 0 && reinvest > 0) {
+        const extraShares = Math.floor(reinvest / sharePrice);
+        if (extraShares > 0) {
+          shares += extraShares;
+          // any fractional leftover from reinvest is ignored since whole shares only
+        }
+      }
+
+      totalDivs += dividend;
+      totalWithdrawn += withdrawn;
+      totalReinvested += reinvest;
+    }
+
+    // 3) Apply monthly growth to share price
+    if (growthPct > 0) {
+      sharePrice *= (1 + (growthPct / 12));
+    }
+
+    // 4) Portfolio value (no cash tracking)
+    portfolio = shares * sharePrice;
+
+    // Labels
+    labels.push(hasBirthdate ? (age).toFixed(1) : `${year}-${String(month).padStart(2, '0')}`);
+
+    // Series
+    valueSeries.push(portfolio);
+    withdrawnSeries.push(withdrawn);
+    reinvestedSeries.push(reinvest);
+    sharesSeries.push(shares);
+
+    // Table row
+    rows.push({
+      label: `${year}-${String(month).padStart(2, '0')}`,
+      age: hasBirthdate ? (age).toFixed(1) : '',
+      portfolio,
+      shares,
+      dividend,
+      withdrawn,
+      reinvest,
+      contribThisMonth: contrib
+    });
+  }
+
+  // Render Summary
+  el('sumContrib').textContent = fmtCurrency(totalContrib, currency);
+  el('sumDivs').textContent = fmtCurrency(totalDivs, currency);
+  el('sumWithdrawn').textContent = fmtCurrency(totalWithdrawn, currency);
+  el('sumReinvested').textContent = fmtCurrency(totalReinvested, currency);
+  el('sumEnding').textContent = fmtCurrency(valueSeries[valueSeries.length - 1] || 0, currency);
+
+  // Render Table
+  renderTable(rows, currency);
+
+  // Charts
+  renderCharts(labels, valueSeries, withdrawnSeries, reinvestedSeries, sharesSeries, currency, hasBirthdate);
+}
+
+function renderTable(rows, currency) {
+  const tbody = document.querySelector('#resultsTable tbody');
+  tbody.innerHTML = '';
+  rows.forEach(r => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${r.label}</td>
+      <td>${r.age}</td>
+      <td>${fmtCurrency(r.portfolio, currency)}</td>
+      <td>${r.shares}</td>
+      <td>${fmtCurrency(r.dividend, currency)}</td>
+      <td>${fmtCurrency(r.withdrawn, currency)}</td>
+      <td>${fmtCurrency(r.reinvest, currency)}</td>
+      <td>${fmtCurrency(r.contribThisMonth, currency)}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function renderCharts(labels, valueSeries, withdrawnSeries, reinvestedSeries, sharesSeries, currency, hasBirthdate) {
+  if (portfolioChart) portfolioChart.destroy();
+  if (withdrawalChart) withdrawalChart.destroy();
+  if (sharesChart) sharesChart.destroy();
+
+  const ctx1 = document.getElementById('portfolioChart').getContext('2d');
+  portfolioChart = new Chart(ctx1, {
+    type: 'line',
+    data: { labels, datasets: [{ label: 'Portfolio Value', data: valueSeries, borderColor: 'blue', fill: false }] },
+    options: {
+      scales: {
+        x: { title: { display: true, text: hasBirthdate ? 'Age (years)' : 'Date' } },
+        y: { ticks: { callback: v => fmtCurrency(v, currency) } }
+      }
+    }
+  });
+
+  const ctx2 = document.getElementById('withdrawalChart').getContext('2d');
+  withdrawalChart = new Chart(ctx2, {
+    type: 'line',
+    data: { 
+      labels, 
+      datasets: [
+        { label: 'Withdrawn', data: withdrawnSeries, borderColor: 'red', fill: false },
+        { label: 'Reinvested', data: reinvestedSeries, borderColor: 'green', fill: false }
+      ] 
+    },
+    options: {
+      scales: {
+        x: { title: { display: true, text: hasBirthdate ? 'Age (years)' : 'Date' } },
+        y: { ticks: { callback: v => fmtCurrency(v, currency) } }
+      }
+    }
+  });
+
+  const ctx3 = document.getElementById('sharesChart').getContext('2d');
+  sharesChart = new Chart(ctx3, {
+    type: 'line',
+    data: { labels, datasets: [{ label: 'Shares Held', data: sharesSeries, borderColor: 'purple', fill: false }] },
+    options: {
+      scales: {
+        x: { title: { display: true, text: hasBirthdate ? 'Age (years)' : 'Date' } },
+        y: { ticks: { callback: v => Number(v).toFixed(0) } }
+      }
+    }
+  });
+}
+
+/* ---------- CSV Export ---------- */
+function exportCSV() {
+  const currency = el('currency').value;
+  const rows = [...document.querySelectorAll('#resultsTable tbody tr')].map(tr => 
+    [...tr.children].map(td => td.textContent)
+  );
+  const header = ['Month','Age','Portfolio Value','Shares Held','Dividend','Withdrawn','Reinvested','Contrib (This Month)'];
+  const csv = [header, ...rows]
+    .map(r => r.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+    .join('\n');
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'simulation_results.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ---------- Events ---------- */
+el('runBtn').addEventListener('click', runSimulation);
+el('exportBtn').addEventListener('click', exportCSV);
+
+el('drawType').addEventListener('change', () => {
+  const unit = el('drawType').value === 'percent' ? '%' : 'amount';
+  el('drawUnit').textContent = unit === '%' ? '%' : 'amount';
+});
+
+el('resetBtn').addEventListener('click', () => {
+  // Reset core inputs
+  el('currency').value = 'GBP';
+  el('sharePrice').value = 100;
+  el('initialInvestment').value = 10000;
+  el('years').value = 30;
+
+  el('yieldPct').value = 4;
+  el('divFreq').value = 'quarterly';
+  el('growthPct').value = 5;
+
+  el('drawType').value = 'percent';
+  el('drawValue').value = 0;
+  el('drawUnit').textContent = '%';
+
+  populateYears(startYearSel, 2000, THIS_YEAR + 50, THIS_YEAR);
+  populateMonths(startMonthSel, THIS_MONTH);
+  populateYears(ddStartYearSel, 2000, THIS_YEAR + 50, THIS_YEAR);
+  populateMonths(ddStartMonthSel, THIS_MONTH);
+
+  birthYearSel.value = '';
+  birthMonthSel.value = '';
+
+  // Clear periods and add default
+  contribContainer.innerHTML = '';
+  addContributionPeriod();
+
+  // Clear outputs
+  document.querySelector('#resultsTable tbody').innerHTML = '';
+  el('sumContrib').textContent = '–';
+  el('sumDivs').textContent = '–';
+  el('sumWithdrawn').textContent = '–';
+  el('sumReinvested').textContent = '–';
+  el('sumEnding').textContent = '–';
+
+  if (portfolioChart) portfolioChart.destroy();
+  if (withdrawalChart) withdrawalChart.destroy();
+  if (sharesChart) sharesChart.destroy();
+});
+
+// Initialize unit label
+el('drawUnit').textContent = '%';
+
+// Auto-run once on load for convenience
+runSimulation();
+</script>
+</body>
+</html>
